@@ -83,9 +83,9 @@ def strict_validate(record, silent=True):
     byr_check = lambda r: 1920 <= int(r['byr']) <= 2002
     iyr_check = lambda r: 2010 <= int(r['iyr']) <= 2020
     eyr_check = lambda r: 2020 <= int(r['eyr']) <= 2030
-    hcl_check = lambda r: re.match('#[0-9a-f]{6}', r['hcl']) is not None
-    ecl_check = lambda r: re.match('(amb|blu|brn|gry|grn|hzl|oth)', r['ecl']) is not None
-    pid_check = lambda r: re.match('\d{9}', r['pid']) is not None
+    hcl_check = lambda r: re.match('^#[0-9a-f]{6}$', r['hcl']) is not None
+    ecl_check = lambda r: re.match('^(amb|blu|brn|gry|grn|hzl|oth)$', r['ecl']) is not None
+    pid_check = lambda r: re.match('^\d{9}$', r['pid']) is not None
 
     def hgt_check(r):
         m = re.match('(\d+)(in|cm)', r['hgt'])
@@ -128,6 +128,16 @@ def create_dataframe(records, strict):
     validator = {False: validate, True: strict_validate}[strict]
     return pd.DataFrame(rec for rec in records if validator(rec))
 
+
+if __name__ == '__main__':
+    records = read()
+    # Part 1
+    print(count_valid(records, strict=False))
+    # Part 2
+    print(count_valid(records, strict=True))
+    # Export valid
+    df = create_dataframe(records, True)
+    df.to_csv('day_04_part2_valid.csv', index=False)
 
 """
 --- Day 4: Passport Processing ---
